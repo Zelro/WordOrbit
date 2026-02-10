@@ -1,0 +1,190 @@
+<!-- ==================== Wordapp/templates/Wordapp/profile.html ==================== -->
+{% extends 'Wordapp/base.html' %}
+
+{% block title %}My Profile - WordOrbit{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Profile Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white shadow-lg">
+                <div class="card-body text-center py-5">
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="Avatar" class="profile-avatar mb-3">
+                    {% else %}
+                        <i class="fas fa-user-circle fa-5x mb-3"></i>
+                    {% endif %}
+                    <h2 class="mb-2">{{ user.username }}</h2>
+                    <p class="lead mb-0">
+                        {{ user.first_name }} {{ user.last_name }}
+                    </p>
+                    <small>Member since {{ user.date_joined|date:"F Y" }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Statistics Column -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow mb-3">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-chart-bar"></i> Statistics
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Total Games</small>
+                        <h3 class="text-primary">{{ profile.total_games }}</h3>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <small class="text-muted">Total Score</small>
+                        <h3 class="text-success">{{ profile.total_score }}</h3>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <small class="text-muted">Highest Score</small>
+                        <h3 class="text-warning">{{ profile.highest_score }}</h3>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <small class="text-muted">Words Discovered</small>
+                        <h3 class="text-info">{{ profile.words_discovered }}</h3>
+                    </div>
+                    <hr>
+                    <div class="mb-0">
+                        <small class="text-muted">Average Score</small>
+                        <h3 class="text-danger">{{ profile.average_score|floatformat:2 }}</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-user"></i> Profile Info
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    {% if user.first_name %}
+                    <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                    {% endif %}
+                    {% if profile.bio %}
+                    <p><strong>Bio:</strong> {{ profile.bio }}</p>
+                    {% endif %}
+                    <hr>
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Achievements & Recent Games Column -->
+        <div class="col-md-8">
+            <!-- Achievements -->
+            <div class="card shadow mb-3">
+                <div class="card-header bg-warning">
+                    <i class="fas fa-trophy"></i> Achievements
+                </div>
+                <div class="card-body">
+                    {% if achievements %}
+                    <div class="row">
+                        {% for achievement in achievements %}
+                        <div class="col-md-6 mb-3">
+                            <div class="achievement-card">
+                                <h5 class="mb-1">
+                                    <i class="fas fa-award"></i> {{ achievement.name }}
+                                </h5>
+                                <p class="mb-1 small">{{ achievement.description }}</p>
+                                <small class="text-muted">
+                                    Earned: {{ achievement.earned_at|date:"M d, Y" }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-medal fa-3x mb-3"></i>
+                        <p>No achievements yet. Keep playing to earn them!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Games -->
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-history"></i> Recent Games
+                </div>
+                <div class="card-body">
+                    {% if recent_games %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Difficulty</th>
+                                    <th>Words</th>
+                                    <th>Score</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for game in recent_games %}
+                                <tr>
+                                    <td>{{ game.created_at|date:"M d, H:i" }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ game.difficulty }}">
+                                            {{ game.difficulty|upper }}
+                                        </span>
+                                    </td>
+                                    <td>{{ game.words_found }}/{{ game.total_words }}</td>
+                                    <td><strong>{{ game.score }}</strong></td>
+                                    <td>{{ game.formatted_time }}</td>
+                                    <td>
+                                        {% if game.completed %}
+                                        <i class="fas fa-check-circle text-success"></i>
+                                        {% else %}
+                                        <i class="fas fa-times-circle text-danger"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-gamepad fa-3x mb-3"></i>
+                        <p>No games played yet. Start your first game!</p>
+                        <a href="{% url 'game_play' %}" class="btn btn-success">
+                            <i class="fas fa-play"></i> Play Now
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Actions -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{% url 'game_play' %}" class="btn btn-primary btn-lg m-2">
+                <i class="fas fa-play"></i> Play Game
+            </a>
+            <a href="{% url 'leaderboard' %}" class="btn btn-success btn-lg m-2">
+                <i class="fas fa-trophy"></i> View Leaderboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+

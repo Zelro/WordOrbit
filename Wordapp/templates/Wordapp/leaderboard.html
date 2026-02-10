@@ -1,0 +1,155 @@
+<!-- ==================== Wordapp/templates/Wordapp/leaderboard.html ==================== -->
+{% extends 'Wordapp/base.html' %}
+
+{% block title %}Leaderboard - WordOrbit{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-4">
+                <i class="fas fa-trophy text-warning"></i> Leaderboard
+            </h1>
+            <p class="lead text-muted">Top Players & Recent High Scores</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Top Players -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="fas fa-crown"></i> Top Players</h4>
+                </div>
+                <div class="card-body">
+                    {% if top_players %}
+                    <div class="list-group list-group-flush">
+                        {% for player in top_players %}
+                        <div class="list-group-item {% if player.user == user %}bg-light{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-primary me-2">{{ forloop.counter }}</span>
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-crown text-warning"></i>
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-medal" style="color: silver;"></i>
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-medal" style="color: #cd7f32;"></i>
+                                    {% endif %}
+                                    <strong>{{ player.user.username }}</strong>
+                                    {% if player.user == user %}
+                                    <span class="badge bg-success">You</span>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <span class="badge bg-warning text-dark fs-6">
+                                        <i class="fas fa-star"></i> {{ player.highest_score }}
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                Games: {{ player.total_games }} | 
+                                Total Score: {{ player.total_score }} | 
+                                Words: {{ player.words_discovered }}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <p>No players yet. Be the first!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent High Scores -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-fire"></i> Recent High Scores</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Difficulty Filter -->
+                    <div class="mb-3">
+                        <form method="get" class="d-flex gap-2">
+                            <select name="difficulty" class="form-select" onchange="this.form.submit()">
+                                <option value="all" {% if selected_difficulty == 'all' %}selected{% endif %}>All Levels</option>
+                                <option value="easy" {% if selected_difficulty == 'easy' %}selected{% endif %}>Easy</option>
+                                <option value="medium" {% if selected_difficulty == 'medium' %}selected{% endif %}>Medium</option>
+                                <option value="hard" {% if selected_difficulty == 'hard' %}selected{% endif %}>Hard</option>
+                            </select>
+                        </form>
+                    </div>
+                    
+                    {% if recent_games %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Player</th>
+                                    <th>Score</th>
+                                    <th>Level</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for game in recent_games %}
+                                <tr {% if game.user == user %}class="table-success"{% endif %}>
+                                    <td>
+                                        {% if forloop.counter <= 3 %}
+                                        <i class="fas fa-medal text-warning"></i>
+                                        {% else %}
+                                        {{ forloop.counter }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ game.user.username }}</strong>
+                                        {% if game.user == user %}
+                                        <span class="badge bg-success">You</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><strong>{{ game.score }}</strong></td>
+                                    <td>
+                                        <span class="badge bg-{{ game.difficulty }}">
+                                            {{ game.difficulty|upper }}
+                                        </span>
+                                    </td>
+                                    <td><small>{{ game.created_at|date:"M d" }}</small></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-gamepad fa-3x mb-3"></i>
+                        <p>No games played yet!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Call to Action -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white text-center shadow-lg">
+                <div class="card-body py-5">
+                    <h3 class="mb-3">Think you can make it to the top?</h3>
+                    <p class="lead mb-4">
+                        Play now and compete for the #1 spot!
+                    </p>
+                    <a href="{% url 'game_play' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-play"></i> Start Playing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

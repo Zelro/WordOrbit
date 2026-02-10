@@ -1,0 +1,59 @@
+<!-- ==================== Wordapp/templates/Wordapp/login.html ==================== -->
+{% extends 'Wordapp/base.html' %}
+
+{% block title %}
+  Login - WordOrbit
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card shadow-lg fade-in">
+          <div class="card-header bg-success text-white text-center">
+            <h3 class="mb-0"><i class="fas fa-sign-in-alt"></i> Welcome Back!</h3>
+            <p class="mb-0 mt-2">Login to WordOrbit</p>
+          </div>
+          <div class="card-body p-4">
+            <form method="post">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label for="username" class="form-label"><i class="fas fa-user"></i> Username</label>
+                <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Enter your username" required autofocus />
+              </div>
+
+              <div class="mb-4">
+                <label for="password" class="form-label"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Enter your password" required />
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-sign-in-alt"></i> Login</button>
+              </div>
+            </form>
+
+            <hr class="my-4" />
+
+            <p class="text-center mb-0">
+              Don't have an account?
+              <a href="{% url 'register' %}" class="text-success fw-bold">Register here <i class="fas fa-arrow-right"></i></a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="card mt-3 bg-light">
+          <div class="card-body text-center">
+            <h6 class="text-muted mb-2">Why Login?</h6>
+            <small class="text-muted">
+              <i class="fas fa-check text-success"></i> Save your progress<br />
+              <i class="fas fa-check text-success"></i> Compete on leaderboards<br />
+              <i class="fas fa-check text-success"></i> Earn achievements
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

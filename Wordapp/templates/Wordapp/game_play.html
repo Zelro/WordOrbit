@@ -1,0 +1,656 @@
+
+{% extends 'Wordapp/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Play Game - WordOrbit{% endblock %}
+
+{% block content %}
+<style>
+    .game-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+    }
+    
+    /* Grid Styling */
+    .game-grid {
+        display: inline-block;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .grid-row {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 4px;
+    }
+    
+    .grid-row:last-child {
+        margin-bottom: 0;
+    }
+    
+    .grid-cell {
+        width: 45px;
+        height: 45px;
+        background: #f3f4f6;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+    
+    .grid-cell:hover {
+        background: #e0e7ff;
+        transform: scale(1.1);
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .grid-cell.selected {
+        background: #667eea;
+        color: white;
+        transform: scale(1.1);
+        border-color: #5568d3;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+    }
+    
+    .grid-cell.found {
+        background: #10b981;
+        color: white;
+        border-color: #059669;
+        cursor: pointer;  /* Allow clicking found letters */
+        opacity: 0.8;
+    }
+    
+    .grid-cell.found:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        opacity: 1;
+    }
+    
+    /* When a found cell is selected again */
+    .grid-cell.found.selected {
+        background: linear-gradient(135deg, #10b981, #667eea);
+        color: white;
+        transform: scale(1.15);
+        border-color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.6);
+        animation: pulse-glow 0.3s;
+    }
+    
+    @keyframes pulse-glow {
+        0%, 100% { 
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.6);
+        }
+        50% { 
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.9);
+        }
+    }
+    
+    /* Word list styling */
+    .word-item {
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .word-item:hover {
+        background: #e0e7ff;
+        transform: translateX(5px);
+    }
+    
+    .word-item.found {
+        background: #d1fae5;
+        text-decoration: line-through;
+        opacity: 0.7;
+    }
+    
+    /* Animations */
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .pulse {
+        animation: pulse 0.3s ease-in-out;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .grid-cell {
+            width: 35px;
+            height: 35px;
+            font-size: 14px;
+        }
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Game Header -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">
+                            <i class="fas fa-gamepad"></i> Find the Hidden Words
+                        </h3>
+                        <div>
+                            <span class="badge bg-light text-dark fs-6 me-2">
+                                {{ difficulty|upper }}
+                            </span>
+                            <span class="badge bg-warning text-dark fs-6" id="timer">
+                                <i class="fas fa-clock"></i> <span id="time-display">00:00</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Game Grid Column -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-lg game-container">
+                <div class="card-body text-center">
+                    <!-- Grid -->
+                    <div id="game-grid" class="game-grid mx-auto mb-4">
+                        {% for row in grid %}
+                        <div class="grid-row">
+                            {% for cell in row %}
+                            <div class="grid-cell" 
+                                 data-row="{{ forloop.parentloop.counter0 }}" 
+                                 data-col="{{ forloop.counter0 }}">
+                                {{ cell }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Selected Word Display -->
+                    <div id="selected-word" class="mb-4">
+                        <h5 class="mb-2 text-muted">Selected Word:</h5>
+                        <h3 id="current-word" class="text-primary fw-bold">
+                            Click cells to select
+                        </h3>
+                    </div>
+                    
+                    <!-- Game Controls -->
+                    <div class="btn-group btn-group-lg" role="group">
+                        <button type="button" id="clear-selection" class="btn btn-warning">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                        <button type="button" id="submit-word" class="btn btn-success">
+                            <i class="fas fa-check"></i> Submit Word
+                        </button>
+                        <button type="button" id="hint-button" class="btn btn-info">
+                            <i class="fas fa-lightbulb"></i> Hint (-20pts)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar Column -->
+        <div class="col-lg-4">
+            <!-- Score Card -->
+            <div class="card shadow mb-3">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-star"></i> Score
+                </div>
+                <div class="card-body text-center">
+                    <h1 id="score-display" class="display-3 text-success mb-0">0</h1>
+                    <p class="text-muted mb-0">Points</p>
+                </div>
+            </div>
+            
+            <!-- Words to Find -->
+            <div class="card shadow mb-3">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-list"></i> Words to Find
+                    <small class="d-block mt-1" style="font-size: 0.85rem;">Click on any word to see its definition</small>
+                </div>
+                <div class="card-body">
+                    <div id="words-list">
+                        {% for word in words %}
+                        <div class="word-item" data-word="{{ word }}">
+                            <i class="fas fa-circle text-warning"></i> 
+                            <span class="fw-bold">{{ word }}</span>
+                            <i class="fas fa-info-circle text-muted ms-auto" style="font-size: 0.9rem;"></i>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <strong>Progress:</strong>
+                        <h4 class="mt-2">
+                            <span id="found-count" class="text-success">0</span> / 
+                            <span class="text-muted">{{ words|length }}</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Controls Card -->
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <i class="fas fa-cog"></i> Game Controls
+                </div>
+                <div class="card-body">
+                    <button type="button" id="end-game-btn" class="btn btn-danger w-100 mb-2">
+                        <i class="fas fa-flag-checkered"></i> End Game
+                    </button>
+                    
+                    <a href="{% url 'game_play' %}" class="btn btn-secondary w-100 mb-3">
+                        <i class="fas fa-redo"></i> New Game
+                    </a>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Change Difficulty:</h6>
+                    <form method="post" action="{% url 'game_play' %}">
+                        {% csrf_token %}
+                        <select name="difficulty" class="form-select mb-2">
+                           <option value="easy" {% if difficulty == 'easy' %}selected{% endif %}>
+                                Easy (8x8)
+                            </option>
+                            <option value="medium" {% if difficulty == 'medium' %}selected{% endif %}>
+                                Medium (10x10)
+                            </option>
+                            <option value="hard" {% if difficulty == 'hard' %}selected{% endif %}>
+                                Hard (12x12)
+                            </option>
+                        </select>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-play"></i> Start New Level
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for ending game -->
+<form id="end-game-form" method="post" action="{% url 'end_game' %}" style="display: none;">
+    {% csrf_token %}
+</form>
+
+<!-- Instructions Modal -->
+<div class="modal fade" id="instructionsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle"></i> How to Play
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <ol class="lead">
+                    <li>Click letters in sequence to select a word</li>
+                    <li>Words can be horizontal, vertical, or diagonal</li>
+                    <li>Click "Submit Word" to check your selection</li>
+                    <li>Find all words to complete the game!</li>
+                    <li>Use hints if you're stuck (costs 20 points)</li>
+                    <li><strong>Click on words in the list to see their definitions</strong></li>
+                </ol>
+                <div class="alert alert-info">
+                    <strong>Tips:</strong><br>
+                    • Selected cells turn purple<br>
+                    • Found words turn green<br>
+                    • Your score increases with each word found
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    Got it! Let's Play!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Game State
+let selectedCells = [];
+let foundWords = [];
+let startTime = Date.now();
+let timerInterval;
+let score = 0;
+const wordsList = {{ words|safe }};
+const definitions = {{ definitions|safe }};
+
+// Initialize Bootstrap tooltips and word definitions
+document.addEventListener('DOMContentLoaded', function() {
+    // Click to show definition in modal
+    document.querySelectorAll('.word-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            // Don't show definition if word is already found
+            if (this.classList.contains('found')) {
+                return;
+            }
+            
+            const word = this.getAttribute('data-word');
+            const definition = definitions[word];
+            if (definition) {
+                showDefinitionModal(word, definition);
+            }
+        });
+    });
+});
+
+// Show definition in a modal
+function showDefinitionModal(word, definition) {
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-book"></i> ${word}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">${definition}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    modal.addEventListener('hidden.bs.modal', function() {
+        modal.remove();
+    });
+}
+
+// Start timer
+timerInterval = setInterval(updateTimer, 1000);
+
+function updateTimer() {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    document.getElementById('time-display').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Check if two cells are adjacent (including diagonally)
+function areCellsAdjacent(cell1, cell2) {
+    const row1 = parseInt(cell1.dataset.row);
+    const col1 = parseInt(cell1.dataset.col);
+    const row2 = parseInt(cell2.dataset.row);
+    const col2 = parseInt(cell2.dataset.col);
+    
+    const rowDiff = Math.abs(row1 - row2);
+    const colDiff = Math.abs(col1 - col2);
+    
+    // Adjacent if within 1 step in any direction (horizontal, vertical, or diagonal)
+    return rowDiff <= 1 && colDiff <= 1 && !(rowDiff === 0 && colDiff === 0);
+}
+
+// Check if selection follows a consistent direction
+function isConsistentDirection(cells) {
+    if (cells.length < 2) return true;
+    
+    // Get direction from first two cells
+    const row1 = parseInt(cells[0].dataset.row);
+    const col1 = parseInt(cells[0].dataset.col);
+    const row2 = parseInt(cells[1].dataset.row);
+    const col2 = parseInt(cells[1].dataset.col);
+    
+    const rowStep = row2 - row1;
+    const colStep = col2 - col1;
+    
+    // Check if all subsequent cells follow the same direction
+    for (let i = 1; i < cells.length - 1; i++) {
+        const currentRow = parseInt(cells[i].dataset.row);
+        const currentCol = parseInt(cells[i].dataset.col);
+        const nextRow = parseInt(cells[i + 1].dataset.row);
+        const nextCol = parseInt(cells[i + 1].dataset.col);
+        
+        const currentRowStep = nextRow - currentRow;
+        const currentColStep = nextCol - currentCol;
+        
+        // Direction must be consistent
+        if (currentRowStep !== rowStep || currentColStep !== colStep) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// Cell selection
+document.querySelectorAll('.grid-cell').forEach(function(cell) {
+    cell.addEventListener('click', function() {
+        const index = selectedCells.indexOf(this);
+        
+        if (index !== -1) {
+            // Deselect if clicking last selected cell
+            if (index === selectedCells.length - 1) {
+                this.classList.remove('selected');
+                selectedCells.pop();
+            }
+        } else {
+            // Check if this is the first cell or if it's adjacent to the last selected cell
+            if (selectedCells.length === 0) {
+                // First cell, always allow
+                this.classList.add('selected');
+                selectedCells.push(this);
+            } else {
+                const lastCell = selectedCells[selectedCells.length - 1];
+                
+                // Check if adjacent to last cell
+                if (areCellsAdjacent(lastCell, this)) {
+                    // Create temporary array to test direction consistency
+                    const tempCells = [...selectedCells, this];
+                    
+                    // Check if this maintains a consistent direction
+                    if (isConsistentDirection(tempCells)) {
+                        this.classList.add('selected');
+                        selectedCells.push(this);
+                    } else {
+                        showAlert('Words must be in a straight line (horizontal, vertical, or diagonal)!', 'warning');
+                    }
+                } else {
+                    showAlert('You can only select adjacent cells!', 'warning');
+                }
+            }
+        }
+        updateSelectedWord();
+    });
+});
+
+function updateSelectedWord() {
+    const word = selectedCells.map(function(cell) {
+        return cell.textContent.trim();
+    }).join('');
+    const displayEl = document.getElementById('current-word');
+    displayEl.textContent = word || 'Click cells to select';
+    displayEl.classList.add('pulse');
+    setTimeout(function() {
+        displayEl.classList.remove('pulse');
+    }, 300);
+}
+
+// Clear selection
+document.getElementById('clear-selection').addEventListener('click', function() {
+    selectedCells.forEach(function(cell) {
+        cell.classList.remove('selected');
+    });
+    selectedCells = [];
+    updateSelectedWord();
+    showAlert('Selection cleared', 'info');
+});
+
+// Submit word - FIXED to call backend API
+document.getElementById('submit-word').addEventListener('click', function() {
+    const word = selectedCells.map(function(cell) {
+        return cell.textContent.trim();
+    }).join('');
+    
+    if (!word) {
+        showAlert('Please select a word first!', 'warning');
+        return;
+    }
+    
+    console.log('Submitting word to backend:', word);
+    
+    // Call backend to verify and save word
+    fetch('{% url "check_word" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: 'word=' + encodeURIComponent(word)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Backend response:', data);
+        
+        if (data.status === 'success') {
+            // Mark cells as found
+            selectedCells.forEach(function(cell) {
+                cell.classList.remove('selected');
+                cell.classList.add('found');
+            });
+            
+            // Update UI
+            foundWords.push(word);
+            const wordItem = document.querySelector('[data-word="' + word + '"]');
+            wordItem.classList.add('found');
+            wordItem.querySelector('i').className = 'fas fa-check-circle text-success';
+            
+            // Update score
+            score += 100;
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('found-count').textContent = data.total_found;
+            
+            // Show definition after finding word
+            showAlert('Great! You found "' + word + '"! ' + data.definition, 'success', 5000);
+            
+            // Check if all words found
+            if (foundWords.length === wordsList.length) {
+                setTimeout(function() {
+                    console.log('All words found! Showing completion dialog...');
+                    if (confirm('🎉 Congratulations! You found all words! Submit your score?')) {
+                        console.log('User confirmed, submitting form...');
+                        const form = document.getElementById('end-game-form');
+                        if (form) {
+                            form.submit();
+                        } else {
+                            console.error('ERROR: end-game-form not found!');
+                            alert('Error: Could not submit game. Please use the "End Game" button.');
+                        }
+                    } else {
+                        console.log('User cancelled auto-submit');
+                    }
+                }, 500);
+            }
+            
+            selectedCells = [];
+            updateSelectedWord();
+        } else if (data.status === 'duplicate') {
+            showAlert(data.message, 'info');
+        } else {
+            showAlert(data.message, 'danger');
+            selectedCells.forEach(function(cell) {
+                cell.classList.remove('selected');
+            });
+            selectedCells = [];
+            updateSelectedWord();
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting word:', error);
+        showAlert('Error checking word. Please try again.', 'danger');
+    });
+});
+
+// Hint button
+document.getElementById('hint-button').addEventListener('click', function() {
+    const remainingWords = wordsList.filter(function(w) {
+        return !foundWords.includes(w);
+    });
+    
+    if (remainingWords.length === 0) {
+        showAlert('You found all words!', 'success');
+        return;
+    }
+    
+    if (score < 20) {
+        showAlert('Not enough points for a hint! (Costs 20 points)', 'warning');
+        return;
+    }
+    
+    score -= 20;
+    document.getElementById('score-display').textContent = score;
+    
+    const hintWord = remainingWords[0];
+    showAlert('Hint: Look for "' + hintWord + '" (' + hintWord.length + ' letters)', 'info', 5000);
+});
+
+// End game button
+document.getElementById('end-game-btn').addEventListener('click', function() {
+    if (confirm('Are you sure you want to end the game? Your current progress will be saved.')) {
+        document.getElementById('end-game-form').submit();
+    }
+});
+
+// Show alert function
+function showAlert(message, type, duration) {
+    duration = duration || 3000;
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-' + type + ' alert-dismissible fade show position-fixed';
+    alert.style.cssText = 'top: 80px; right: 20px; z-index: 9999; min-width: 300px; max-width: 400px;';
+    alert.innerHTML = message + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    document.body.appendChild(alert);
+    setTimeout(function() {
+        alert.remove();
+    }, duration);
+}
+
+// Show instructions on load (only once per session)
+window.addEventListener('load', function() {
+    if (!sessionStorage.getItem('instructionsShown')) {
+        const modal = new bootstrap.Modal(document.getElementById('instructionsModal'));
+        modal.show();
+        sessionStorage.setItem('instructionsShown', 'true');
+    }
+});
+
+// Warn before leaving page during active game
+window.addEventListener('beforeunload', function(e) {
+    if (foundWords.length > 0 && foundWords.length < wordsList.length) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+</script>
+{% endblock %}

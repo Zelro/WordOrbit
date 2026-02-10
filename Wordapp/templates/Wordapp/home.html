@@ -1,0 +1,373 @@
+    {% extends 'Wordapp/base.html' %}
+    {% load static %}
+
+{% block title %}Home - WordOrbit{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Background Image holding Hero Section*/
+    .hero-section {
+        position: relative;
+        min-height: 90vh;
+       background-image: linear-gradient(rgba(30, 64, 175, 0.4), rgba(8, 145, 178, 0.4)),
+        url('{% static "Wordapp/images/crossword.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 80px 20px;
+    }
+    
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+       background: linear-gradient(135deg, rgba(30, 64, 175, 0.7) 0%, rgba(8, 145, 178, 0.7) 100%);
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .hero-tagline {
+        color: #fbbf24;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 900;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+    
+    .hero-description {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 2.5rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+    
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .hero-btn {
+        padding: 15px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .hero-btn-primary {
+        background: #f59e0b;
+        color: white;
+        border: 2px solid #f59e0b;
+    }
+    
+    .hero-btn-primary:hover {
+        background: #d97706;
+        border-color: #d97706;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+    
+    .hero-btn-secondary {
+        background: white;
+        color: #1e40af;
+        border: 2px solid white;
+    }
+    
+    .hero-btn-secondary:hover {
+        background: transparent;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Content Section */
+    .content-section {
+        background: white;
+        padding: 80px 0;
+        position: relative;
+        z-index: 3;
+    }
+    
+    /* Stats Card Enhancement */
+    .stats-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        padding: 40px;
+        margin-top: -100px;
+        position: relative;
+        z-index: 5;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .stat-value {
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #1e40af, #0891b2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: block;
+        margin-bottom: 10px;
+    }
+    
+    .stat-label {
+        color: #6b7280;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* Section Headers */
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        border-radius: 2px;
+    }
+    
+    .section-subtitle {
+        color: #6b7280;
+        font-size: 1.1rem;
+        margin-bottom: 50px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+        }
+        
+        .stats-card {
+            margin-top: 20px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+        }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Background Image -->
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">
+            Welcome to WordOrbit!
+        </h1>
+        <p class="hero-description">
+            <i class="fas fa-star"></i>
+            Enhance Your Vocabulary Today
+            <i class="fas fa-star"></i>
+        </p>
+        
+        <div class="hero-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'game_play' %}" class="hero-btn hero-btn-primary">
+                    <i class="fas fa-play-circle"></i>
+                    Start Playing
+                </a>
+                <a href="{% url 'profile' %}" class="hero-btn hero-btn-secondary">
+                    <i class="fas fa-user"></i>
+                    My Profile
+                </a>
+            {% else %}
+                <a href="{% url 'register' %}" class="hero-btn hero-btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    Join Free Now
+                </a>
+                <a href="{% url 'login' %}" class="hero-btn hero-btn-secondary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Section -->
+<div class="content-section">
+    <div class="container">
+        <!-- Game Statistics Card -->
+        <div class="stats-card">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ total_users }}</span>
+                        <span class="stat-label"><i class="fas fa-users"></i> Active Players</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ total_games }}</span>
+                        <span class="stat-label"><i class="fas fa-gamepad"></i> Games Played</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ total_words }}</span>
+                        <span class="stat-label"><i class="fas fa-book"></i> Words Available</span>
+                    </div>
+                </div>
+            </div>
+            
+            {% if user.is_authenticated %}
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-3">
+                    <i class="fas fa-user-circle text-primary fs-4"></i>
+                    <span class="ms-2 fs-5">Welcome back, <strong class="text-primary">{{ user.username }}</strong>!</span>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Features Section -->
+        <div class="text-center mt-5 pt-5">
+            <h2 class="section-title">Why Choose WordOrbit?</h2>
+            <p class="section-subtitle">Discover the benefits of learning through play</p>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon">
+                            <i class="fas fa-graduation-cap text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Learn New Words</h4>
+                        <p class="text-muted">Expand your vocabulary with our extensive word database featuring definitions and real-world examples</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon">
+                            <i class="fas fa-trophy text-warning"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Compete & Win</h4>
+                        <p class="text-muted">Challenge yourself and climb the leaderboard to become the ultimate word master</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon">
+                            <i class="fas fa-gamepad text-success"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Fun Gameplay</h4>
+                        <p class="text-muted">Enjoy multiple difficulty levels and exciting challenges with time-based scoring</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Play Section -->
+        <div class="text-center mt-5 pt-5">
+            <h2 class="section-title">How to Play</h2>
+            <p class="section-subtitle">Get started in just 4 simple steps</p>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-md-6 col-lg-3">
+                <div class="card step-card">
+                    <div class="card-body text-center p-4">
+                        <div class="step-badge mb-3">1</div>
+                        <h5 class="fw-bold mb-3">Register/Login</h5>
+                        <p class="text-muted mb-0">Create your free account to track your progress and achievements</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card step-card">
+                    <div class="card-body text-center p-4">
+                        <div class="step-badge mb-3">2</div>
+                        <h5 class="fw-bold mb-3">Choose Level</h5>
+                        <p class="text-muted mb-0">Select your difficulty: Easy (8x8), Medium (10x10), or Hard (12x12)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card step-card">
+                    <div class="card-body text-center p-4">
+                        <div class="step-badge mb-3">3</div>
+                        <h5 class="fw-bold mb-3">Find Words</h5>
+                        <p class="text-muted mb-0">Click adjacent cells to form words horizontally, vertically, or diagonally</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card step-card">
+                    <div class="card-body text-center p-4">
+                        <div class="step-badge mb-3">4</div>
+                        <h5 class="fw-bold mb-3">Earn Points</h5>
+                        <p class="text-muted mb-0">Submit words and earn bonuses to climb the leaderboard</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'Wordapp/base.html' %}
+
+{% block title %}
+  About - WordOrbit
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-4">
+        <h1 class="display-4">
+          <i class="fas fa-globe"></i>
+          <strong>About WordOrbit</strong>
+        </h1>
+        <p class="lead text-muted">
+          <strong>Enhancing vocabulary through engaging gameplay</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h3><i class="fas fa-bullseye text-primary"></i> Our Mission</h3>
+            <p class="lead">WordOrbit is designed to provide an engaging and educational gaming experience that helps users enhance their vocabulary and word recognition skills.</p>
+            <p>We believe learning should be fun and interactive. Through our word-finding game, players can improve their language skills while enjoying challenging gameplay.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h3><i class="fas fa-lightbulb text-warning"></i> What We Offer</h3>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <i class="fas fa-check text-success"></i> Multiple difficulty levels
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success"></i> Real-time scoring system
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success"></i> Achievement tracking
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success"></i> Competitive leaderboards
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success"></i> Word definitions & examples
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success"></i> Progress tracking
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card bg-light">
+          <div class="card-body">
+            <h3 class="text-center mb-4"><i class="fas fa-graduation-cap text-primary"></i> Developed By</h3>
+            <p class="text-center lead">
+              <strong>Denzel Okoro</strong><br />
+              ADSE JAVA/Oracle Sem 4, Aptech Ajah, Lagos, Nigeria
+            </p>
+            <p class="text-center text-muted">
+              <strong>Built with Django, Python, JavaScript, HTML, CSS, and Bootstrap</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-question-circle"></i> Frequently Asked Questions</h4>
+          </div>
+          <div class="card-body">
+            <div class="accordion" id="faqAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">How do I play the game?</button></h2>
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">Register or login, select a difficulty level, and find hidden words in the letter grid by clicking cells in sequence. Submit your found words to earn points!</div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">Is WordOrbit free to play?</button></h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">Yes! WordOrbit is completely free to play. Just create an account and start playing immediately.</div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">How is scoring calculated?</button></h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">You earn 100 points per word found, plus bonuses for difficulty level, speed, and completing all words in a game.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 text-center">
+        <h3 class="mb-4">Ready to Play?</h3>
+        {% if user.is_authenticated %}
+          <a href="{% url 'game_play' %}" class="btn btn-primary btn-lg"><i class="fas fa-play"></i> Start Playing Now</a>
+        {% else %}
+          <a href="{% url 'register' %}" class="btn btn-primary btn-lg"><i class="fas fa-user-plus"></i> Register Free</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
