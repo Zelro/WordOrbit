@@ -1,51 +1,76 @@
-Username: admin 
-email: denzelkoro@gmail.com
-Pass: 123456
+# WordOrbit
 
+**WordOrbit** is a full‑stack Django web application built as a portfolio project to demonstrate backend engineering, full‑stack development, and production‑ready GitHub practices. The project highlights clean architecture, scalable backend design, and real‑world deployment workflows.
 
+---
 
+## Live Demo
 
+🔗 **Live Site:** [https://wordorbit.onrender.com/](https://wordorbit.onrender.com/)
 
-WordOrbit
+---
+  
+## Screenshots
 
-WordOrbit is a Django-based web application designed to deliver an interactive and user-friendly word-focused experience. The project demonstrates full-stack web development using Django, including backend logic, templates, static asset management, and live deployment.
+### Landing Page
 
-Live Demo
+![WordOrbit Landing Page](screenshots/landing_page.png)
 
-🔗 Live Site: WordOrbit
+### Gameplay Interface
 
-WordOrbit is a Django-based web application designed to deliver an interactive and user-friendly word-focused experience. The project demonstrates full-stack web development using Django, including backend logic, templates, static asset management, and live deployment.
+![WordOrbit Gameplay](screenshots/gameplay.png)
 
-Live Demo
+---
 
-🔗 Live Site: https://wordorbit.onrender.com/
+## Project Summary
 
-Features
+WordOrbit showcases practical experience in building and deploying a full‑stack web application using Django. It emphasizes backend logic, application structure, environment configuration, and maintainable code organization. The project is designed to reflect industry‑standard development practices that are relevant to backend and full‑stack engineering roles.
 
-Interactive word-based functionality
+Key focus areas include:
 
-Clean and responsive user interface
+* Backend architecture and Django application design
+* Full‑stack integration between server logic and UI
+* Environment management and production configuration
+* Version control and GitHub portfolio presentation
 
-Django-powered backend architecture
+---
 
-Static asset handling (CSS, JavaScript, images)
+## Key Features
 
-Admin dashboard for content management
+* Modular Django backend with organized app structure
+* Dynamic template rendering and routing
+* Responsive front‑end interface
+* Secure environment variable configuration (.env)
+* Static and media file management
+* Django admin dashboard for data management
+* Production deployment with Gunicorn
 
-Live deployment for public access
+---
 
-Tech Stack
+## Technical Highlights (Backend & Full‑Stack)
 
-Backend: Django (Python)
+* Designed scalable Django project architecture
+* Implemented environment‑based configuration for security
+* Structured reusable templates and static assets
+* Managed database migrations and application state
+* Configured production deployment pipeline
+* Maintained clean Git commit history and repository structure
 
-Frontend: HTML, CSS, JavaScript
+---
 
-Database: SQLite (default)
+## Tech Stack
 
-Deployment: Render
+* **Backend:** Django (Python)
+* **Frontend:** HTML, CSS, JavaScript
+* **Database:** SQLite
+* **Deployment:** Render + Gunicorn
+* **Version Control:** Git & GitHub
 
-Project Structure
+---
 
+## Project Structure
+
+```
 WordOrbit/
 ├── manage.py
 ├── WordOrbit/
@@ -57,50 +82,89 @@ WordOrbit/
 ├── static/
 ├── requirements.txt
 └── build.sh
+```
 
+The repository is organized to reflect real‑world Django project standards, making it easy for recruiters and collaborators to review the codebase.
 
-Installation (Local Setup)
+---
 
-Clone the repository
+## Installation (Local Setup)
 
-git clone https://github.com/your-username/WordOrbit.git
-cd WordOrbit
+1. **Clone the repository**
 
+   ```bash
+   git clone https://github.com/your-username/WordOrbit.git
+   cd WordOrbit
+   ```
 
-Create a virtual environment
+2. **Create and activate a virtual environment**
 
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
+3. **Install dependencies**
 
-Install dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-pip install -r requirements.txt
+4. **Configure environment variables**
 
+   Create a `.env` file in the project root and add:
 
-Run migrations
+   ```env
+   SECRET_KEY=your_secret_key
+   DEBUG=True
+   ```
 
-python manage.py migrate
+5. **Apply database migrations**
 
+   ```bash
+   python manage.py migrate
+   ```
 
-Start the development server
+6. **Run the development server**
 
-python manage.py runserver
+   ```bash
+   python manage.py runserver
+   ```
 
+7. Visit:
 
-Open your browser and visit:
+   ```
+   http://127.0.0.1:8000
+   ```
 
-http://127.0.0.1:8000
+---
 
+## Deployment
 
-Deployment
+The application is configured for deployment on Render using Gunicorn and an automated build script. Static files are collected during deployment to ensure proper production performance and reliability.
 
-This project is configured for deployment on Render using Gunicorn and a custom build script. Static files are collected automatically during deployment.
+---
 
-Author
+## Portfolio Value
 
-Denzel Okoro
+This project demonstrates:
 
-License
+* Backend engineering with Django
+* Full‑stack web development skills
+* Production deployment workflows
+* Clean GitHub repository organization
+* Readable, maintainable code suitable for collaboration
 
-This project is for educational, professional and personal purposes.
+It is intended to serve as a representative portfolio piece for backend and full‑stack developer roles.
+
+---
+
+## Author
+
+**Denzel Okoro**
+
+---
+
+## License
+
+This project is intended for educational and portfolio use.
