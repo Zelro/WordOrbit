@@ -9,16 +9,33 @@
 🔗 **Live Site:** [https://wordorbit.onrender.com/](https://wordorbit.onrender.com/)
 
 ---
-  
+
 ## Screenshots
 
-### Landing Page
+### Landing Page – First Impression & User Onboarding
 
-![WordOrbit Landing Page](screenshots/landing_page.png)
+![WordOrbit Landing Page](screenshots/landing-page.png)
 
-### Gameplay Interface
+> Clean hero layout, intuitive navigation, and strong call‑to‑action buttons designed to guide new users into gameplay quickly.
+
+**Highlights:**
+
+* Responsive navigation bar
+* Modern hero UI with clear onboarding flow
+* Authentication entry points (Login / Register)
+
+### Gameplay Interface – Interactive Word Engine
 
 ![WordOrbit Gameplay](screenshots/gameplay.png)
+
+> Interactive game dashboard showcasing real‑time scoring, word selection mechanics, and user feedback.
+
+**Highlights:**
+
+* Dynamic word grid interaction
+* Live score tracking
+* Difficulty levels and timer system
+* Instruction modal for improved UX
 
 ---
 
@@ -93,7 +110,7 @@ The repository is organized to reflect real‑world Django project standards, ma
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/WordOrbit.git
+   git clone https://github.com/Zelro/WordOrbit.git
    cd WordOrbit
    ```
 
@@ -167,4 +184,4 @@ It is intended to serve as a representative portfolio piece for backend and full
 
 ## License
 
-This project is intended for educational and portfolio use.
+This project is intended for educational, professional and portfolio use.
