@@ -31,7 +31,11 @@ debug_env = os.getenv("DEBUG", "False").strip().lower()
 DEBUG = debug_env in ("true", "1", "t")
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "wordorbit.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
